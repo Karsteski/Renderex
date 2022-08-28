@@ -1,0 +1,18 @@
+/.vscode
+/builddir
+
+# Exclude Meson Wrap DB subproject files that will be downloaded upon project setup.
+/subprojects/*
+
+# Keep the Wrap DB definitions. 
+!/subprojects/imgui.wrap
+!/subprojects/glm.wrap
+!/subprojects/glew.wrap
+!/subprojects/glfw.wrap
+!/subprojects/gtest.wrap
+
+# Exclude clang cache
+.cache/*
+
+# Don't want the DearImgui ini file
+imgui.ini
