@@ -118,25 +118,35 @@ int main()
     // Relevant OpenGL Code
     // ----------------------
 
-    // clang-format off
-    std::vector<float> vertices = {
-        -0.5f, -0.5f, 0.0f,     // Bottom left
-        0.0f, 0.5f, 0.0f,       // Top middle
-        0.5f, -0.5f, 0.0f       // Bottom right
-    };
-    // clang-format on
-
     // Core OpenGL requires a Vertex Array Object to know what to do with vertices
     unsigned int vao_ID = 0;
     const int nBuffers = 1;
     glGenVertexArrays(nBuffers, &vao_ID);
     glBindVertexArray(vao_ID);
 
+    std::vector<float> vertices = {
+        0.5f, 0.5f, 0.0f, // top right
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f // top lef
+    };
+
     // Setup vertex buffer object
     unsigned int vbo_ID = 0;
     glGenBuffers(nBuffers, &vbo_ID);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_ID);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    // Set up element buffer object
+    std::vector<unsigned int> indices = {
+        0, 1, 3, // first triangle
+        1, 2, 3 // second triangle
+    };
+
+    unsigned int ebo_ID = 0;
+    glGenBuffers(nBuffers, &ebo_ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_ID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     // Tell OpenGL how to interpret vertex data
     const int attributePosition = 0;
@@ -248,9 +258,11 @@ int main()
 
         const int startingIndex = 0;
         const int nVertices = 3;
-        glBindVertexArray(vao_ID);
-        glDrawArrays(GL_TRIANGLES, startingIndex, nVertices);
 
+
+        const int nIndices = 6;
+        const auto ebo_offset = nullptr;
+        glDrawElements(GL_TRIANGLES, nIndices, GL_UNSIGNED_INT, nullptr);
         // Swaps the front and back buffers of the specified window.
         // The front buffer is the current buffer shown on screen, whilst the back is the data to be drawn to.
         glfwSwapBuffers(window);
