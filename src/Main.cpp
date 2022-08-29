@@ -1,9 +1,11 @@
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
 // glew.h MUST be included before gl.h
 // clang-format off
+// For OpenGL functions
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+// Window and input management
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 // clang-format on
@@ -20,8 +22,13 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+// For model and image loading
+#include <stb_image.h>
+
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 // ----------------------
 // OpenGL Error Function
@@ -30,6 +37,11 @@ void APIENTRY GLDebugPrintMessage(GLenum source, GLenum type, unsigned int id, G
 
 int main()
 {
+
+    // ----------------------
+    // So much boilerplate
+    // ----------------------
+
     // GLFW Setup
     if (!glfwInit()) {
         std::cout << "GLFW Initialization failed!\n"
@@ -87,7 +99,6 @@ int main()
     // Printing OpenGL version for convenience.
     std::cout << "OpenGL Version + System GPU Drivers: " << glGetString(GL_VERSION) << std::endl;
 
-
     // DearImGUI setup
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -103,18 +114,142 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version.data());
 
+    // ----------------------
+    // Relevant OpenGL Code
+    // ----------------------
+
+    // clang-format off
+    std::vector<float> vertices = {
+        -0.5f, -0.5f, 0.0f,     // Bottom left
+        0.0f, 0.5f, 0.0f,       // Top middle
+        0.5f, -0.5f, 0.0f       // Bottom right
+    };
+    // clang-format on
+
+    // Core OpenGL requires a Vertex Array Object to know what to do with vertices
+    unsigned int vao_ID = 0;
+    const int nBuffers = 1;
+    glGenVertexArrays(nBuffers, &vao_ID);
+    glBindVertexArray(vao_ID);
+
+    // Setup vertex buffer object
+    unsigned int vbo_ID = 0;
+    glGenBuffers(nBuffers, &vbo_ID);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_ID);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    // Tell OpenGL how to interpret vertex data
+    const int attributePosition = 0;
+    const int attributeSizeInBytes = 3;
+    const int attributeType = GL_FLOAT;
+    const bool normalize = GL_FALSE; // Not relevant at the moment
+    const int stride = 3 * sizeof(float);
+    void* offset = 0; // void* due to OpenGL API requiring it
+    glVertexAttribPointer(attributePosition, attributeSizeInBytes, attributeType, normalize, stride, offset);
+    glEnableVertexAttribArray(attributePosition);
+
+    // Set up vertex shader
+    const std::string vertexShaderSource = R"(
+        #version 330 core
+        layout (location = 0) in vec3 aPos;
+
+        void main()
+        {
+            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+        }
+    )";
+
+    const unsigned int vs_ID = glCreateShader(GL_VERTEX_SHADER);
+    const int nStrings = 1;
+    const char* vs_source = vertexShaderSource.c_str();
+    glShaderSource(vs_ID, nStrings, &vs_source, nullptr);
+    glCompileShader(vs_ID);
+
+    // Vertex shader error checking
+    int vs_result = 0;
+    glGetShaderiv(vs_ID, GL_COMPILE_STATUS, &vs_result);
+
+    if (vs_result == GL_FALSE) {
+        int errorMessageLength = 0;
+        glGetShaderiv(vs_ID, GL_INFO_LOG_LENGTH, &errorMessageLength);
+        std::string message = "";
+        glGetShaderInfoLog(vs_ID, errorMessageLength, &errorMessageLength, message.data());
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << std::endl;
+        std::cout << message << std::endl;
+    }
+
+    // Set up fragment shader
+    const std::string fragmentShaderSource = R"(
+        #version 330 core
+        out vec4 FragColor;
+
+        void main()
+        {
+            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+        }
+    )";
+
+    const unsigned int fs_ID = glCreateShader(GL_FRAGMENT_SHADER);
+    const char* fs_source = fragmentShaderSource.c_str();
+    glShaderSource(fs_ID, nStrings, &fs_source, nullptr);
+    glCompileShader(fs_ID);
+
+    // Fragment shader error checking
+    int fs_result = 0;
+    glGetShaderiv(fs_ID, GL_COMPILE_STATUS, &fs_result);
+
+    if (fs_result == GL_FALSE) {
+        int errorMessageLength = 0;
+        glGetShaderiv(fs_ID, GL_INFO_LOG_LENGTH, &errorMessageLength);
+        std::string message = "";
+        glGetShaderInfoLog(fs_ID, errorMessageLength, &errorMessageLength, message.data());
+
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED" << std::endl;
+        std::cout << message << std::endl;
+    }
+
+    // Create and link shader program
+    const unsigned int shaderProgram_ID = glCreateProgram();
+    glAttachShader(shaderProgram_ID, vs_ID);
+    glAttachShader(shaderProgram_ID, fs_ID);
+    glLinkProgram(shaderProgram_ID);
+    glUseProgram(shaderProgram_ID);
+
+    // Shader program error checking
+    int sp_result = 0;
+    glGetProgramiv(shaderProgram_ID, GL_LINK_STATUS, &sp_result);
+
+    if (sp_result == GL_FALSE) {
+        int errorMessageLength = 512;
+        std::string message = "";
+        glGetProgramInfoLog(shaderProgram_ID, errorMessageLength, nullptr, message.data());
+
+        std::cout << "ERROR::SHADER::PROGRAM::LINKAGE_FAILED" << std::endl;
+        std::cout << message << std::endl;
+    }
+
+    // Delete shaders once they've been linked into the program object
+    glDeleteShader(vs_ID);
+    glDeleteShader(fs_ID);
+
     while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT);
+
         // DearImGUI things
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        std::unique_ptr<bool> showDemoWindow = std::make_unique<bool>();
+        std::unique_ptr<bool> showDemoWindow = std::make_unique<bool>(true);
         ImGui::ShowDemoWindow(showDemoWindow.get());
 
-        // DearImGUI things
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        const int startingIndex = 0;
+        const int nVertices = 3;
+        glBindVertexArray(vao_ID);
+        glDrawArrays(GL_TRIANGLES, startingIndex, nVertices);
 
         // Swaps the front and back buffers of the specified window.
         // The front buffer is the current buffer shown on screen, whilst the back is the data to be drawn to.
@@ -132,7 +267,7 @@ int main()
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    exit(EXIT_SUCCESS);
+    std::exit(EXIT_SUCCESS);
 }
 
 void APIENTRY GLDebugPrintMessage(GLenum source, GLenum type, unsigned int id, GLenum severity, int length, const char* message, const void* data)
