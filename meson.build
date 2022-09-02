@@ -14,10 +14,12 @@ glm_dep = dependency('glm', fallback: ['glm', 'glm_dep'])
 
 src_files = [
     'src/Main.cpp',
+    'src/Buffers/VertexBuffer.cpp'
 ]
 
-include_dirs = [
-    'vendor/stb'
+include_dirs = [ 'vendor/stb',
+    'src',
+    'src/Buffers'
 ]
 
 executable('renderex',

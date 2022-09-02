@@ -1,3 +1,6 @@
+
+#include "VertexBuffer.h"
+
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
 // glew.h MUST be included before gl.h
 // clang-format off
@@ -132,10 +135,15 @@ int main()
     };
 
     // Setup vertex buffer object
-    unsigned int vbo_ID = 0;
-    glGenBuffers(nBuffers, &vbo_ID);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_ID);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    VertexBufferLayout layout;
+    const int nFloatsPerAttribute = 3;
+
+    layout.push<float>("position", nFloatsPerAttribute);
+
+    VertexBuffer vbo("rectangle", vertices, layout);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo.getID());
+    glBufferData(GL_ARRAY_BUFFER, vbo.getData().size() * sizeof(float), vbo.getData().data(), GL_STATIC_DRAW);
 
     // Set up element buffer object
     std::vector<unsigned int> indices = {
@@ -149,14 +157,15 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     // Tell OpenGL how to interpret vertex data
-    const int attributePosition = 0;
-    const int attributeSizeInBytes = 3;
-    const int attributeType = GL_FLOAT;
-    const bool normalize = GL_FALSE; // Not relevant at the moment
-    const int stride = 3 * sizeof(float);
-    void* offset = 0; // void* due to OpenGL API requiring it
-    glVertexAttribPointer(attributePosition, attributeSizeInBytes, attributeType, normalize, stride, offset);
-    glEnableVertexAttribArray(attributePosition);
+    const auto& elements = layout.getElements();
+
+    for (int attributeIndex = 0; attributeIndex < elements.size(); ++attributeIndex) {
+        const auto& element = elements[attributeIndex];
+        void* offset = 0; // void* due to OpenGL API requiring it
+
+        glVertexAttribPointer(attributeIndex, element.count, element.type, element.normalized, layout.getStride(), offset);
+        glEnableVertexAttribArray(attributeIndex);
+    }
 
     // Set up vertex shader
     const std::string vertexShaderSource = R"(
@@ -258,7 +267,6 @@ int main()
 
         const int startingIndex = 0;
         const int nVertices = 3;
-
 
         const int nIndices = 6;
         const auto ebo_offset = nullptr;
