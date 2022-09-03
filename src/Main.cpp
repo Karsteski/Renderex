@@ -7,6 +7,7 @@
 // For OpenGL functions
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <cmath>
 
 // Window and input management
 #define GLFW_INCLUDE_NONE
@@ -202,9 +203,11 @@ int main()
         #version 330 core
         out vec4 FragColor;
 
+        uniform vec4 rectangle_colour;
+
         void main()
         {
-            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+            FragColor = rectangle_colour;
         }
     )";
 
@@ -251,8 +254,16 @@ int main()
     glDeleteShader(vs_ID);
     glDeleteShader(fs_ID);
 
+    // Set up first uniform
+
+    int rectangle_colour_location_ID = glGetUniformLocation(shaderProgram_ID, "rectangle_colour");
+
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        float timeValue = glfwGetTime();
+        float redValue = (std::sin(timeValue) / 2.0f) + 0.5f;
+        glUniform4f(rectangle_colour_location_ID, redValue, 1.0f, 0.0f, 1.0f);
 
         // DearImGUI things
         ImGui_ImplOpenGL3_NewFrame();
