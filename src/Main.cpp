@@ -256,6 +256,7 @@ int main()
 
     // Set up first uniform
 
+    // Check if this is -1, then it failed to get the uniform location
     int rectangle_colour_location_ID = glGetUniformLocation(shaderProgram_ID, "rectangle_colour");
 
     while (!glfwWindowShouldClose(window)) {

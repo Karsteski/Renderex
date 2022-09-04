@@ -14,7 +14,9 @@ glm_dep = dependency('glm', fallback: ['glm', 'glm_dep'])
 
 src_files = [
     'src/Main.cpp',
-    'src/Buffers/VertexBuffer.cpp'
+    'src/Buffers/VertexBuffer.cpp',
+    'src/Buffers/ElementBuffer.cpp',
+    'src/Buffers/BufferManager.cpp'
 ]
 
 include_dirs = [ 'vendor/stb',
