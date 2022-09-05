@@ -10,12 +10,12 @@ ElementBuffer::ElementBuffer(std::string name, std::vector<unsigned int> data)
     glGenBuffers(nBuffers, &m_ebo_ID);
 }
 
-std::string ElementBuffer::getName() { return m_name; }
+std::string ElementBuffer::getName() const { return m_name; }
 
-unsigned int ElementBuffer::getID() { return m_ebo_ID; }
+unsigned int ElementBuffer::getID() const { return m_ebo_ID; }
 
-int ElementBuffer::getNumberOfIndices() { return m_data.size(); }
+int ElementBuffer::getNumberOfIndices() const { return m_data.size(); }
 
-int ElementBuffer::getNumberOfBytes() { return m_data.size() * sizeof(unsigned int); }
+int ElementBuffer::getNumberOfBytes() const { return m_data.size() * sizeof(unsigned int); }
 
-const std::vector<unsigned int>& ElementBuffer::getElements() { return m_data; }
+const std::vector<unsigned int>& ElementBuffer::getElements() const { return m_data; }

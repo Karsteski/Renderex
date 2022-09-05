@@ -14,6 +14,7 @@ enum class BufferType : int {
     Element,
 };
 
+// TODO Should I find a way to only have one of these?
 class BufferManager {
 public:
     BufferManager();
@@ -25,11 +26,11 @@ public:
     void bind(BufferType buffer, int ID);
     void unbind(BufferType buffer);
 
-    const VertexBuffer& getVertexBuffer(unsigned int ID);
-    const ElementBuffer& getElementBuffer(unsigned int ID);
+    const VertexBuffer& getVertexBuffer(unsigned int ID) const;
+    const ElementBuffer& getElementBuffer(unsigned int ID) const;
 
-    const std::vector<VertexBuffer>& getVertexBuffers();
-    const std::vector<ElementBuffer>& getElementBuffers();
+    const std::vector<VertexBuffer>& getVertexBuffers() const;
+    const std::vector<ElementBuffer>& getElementBuffers() const;
 
 private:
     unsigned int m_vao;
@@ -42,6 +43,7 @@ private:
 
     unsigned int m_fbo;
 
+    // Core OpenGL requires a Vertex Array Object to know what to do with the vertices
     void createVAO();
 
     unsigned int createVertexBuffer(std::string name, std::vector<float> vertices, VertexBufferLayout layout);

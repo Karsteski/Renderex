@@ -38,39 +38,43 @@ void BufferManager::unbind(BufferType buffer)
     switch (buffer) {
     case BufferType::Vertex:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        m_bound_vbo = 0;
         break;
     case BufferType::Element:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        m_bound_ebo = 0;
         break;
     }
 }
 
-const VertexBuffer& BufferManager::getVertexBuffer(unsigned int ID)
+const VertexBuffer& BufferManager::getVertexBuffer(unsigned int ID) const
 {
     auto matches_ID = [=](VertexBuffer vbo) -> bool {
         return vbo.getID() == ID;
     };
 
-    const auto matching_vbo = std::find_if(m_vertex_buffers.begin(), m_vertex_buffers.end(), matches_ID);
-    return *matching_vbo;
+    // const auto matching_vbo = std::find_if(m_vertex_buffers.begin(), m_vertex_buffers.end(), matches_ID);
+    // return *matching_vbo;
+    return m_vertex_buffers[0];
 }
 
-const ElementBuffer& BufferManager::getElementBuffer(unsigned int ID)
+const ElementBuffer& BufferManager::getElementBuffer(unsigned int ID) const
 {
     auto matches_ID = [=](ElementBuffer ebo) -> bool {
         return ebo.getID() == ID;
     };
 
-    const auto matching_ebo = std::find_if(m_element_buffers.begin(), m_element_buffers.end(), matches_ID);
-    return *matching_ebo;
+    // const auto matching_ebo = std::find_if(m_element_buffers.begin(), m_element_buffers.end(), matches_ID);
+    // return *matching_ebo;
+    return m_element_buffers[0];
 }
 
-const std::vector<VertexBuffer>& BufferManager::getVertexBuffers()
+const std::vector<VertexBuffer>& BufferManager::getVertexBuffers() const
 {
     return m_vertex_buffers;
 }
 
-const std::vector<ElementBuffer>& BufferManager::getElementBuffers()
+const std::vector<ElementBuffer>& BufferManager::getElementBuffers() const
 {
     return m_element_buffers;
 }

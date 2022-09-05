@@ -1,5 +1,4 @@
-
-#include "VertexBuffer.h"
+#include "BufferManager.h"
 
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
 // glew.h MUST be included before gl.h
@@ -122,12 +121,8 @@ int main()
     // Relevant OpenGL Code
     // ----------------------
 
-    // Core OpenGL requires a Vertex Array Object to know what to do with vertices
-    unsigned int vao_ID = 0;
-    const int nBuffers = 1;
-    glGenVertexArrays(nBuffers, &vao_ID);
-    glBindVertexArray(vao_ID);
-
+    BufferManager buffer_manager;
+    int nBuffers = 1;
     std::vector<float> vertices = {
         0.5f, 0.5f, 0.0f, // top right
         0.5f, -0.5f, 0.0f, // bottom right
@@ -135,16 +130,11 @@ int main()
         -0.5f, 0.5f, 0.0f // top lef
     };
 
-    // Setup vertex buffer object
-
     VertexBufferLayout layout;
     const int nFloatsPerAttribute = 3;
-
     layout.push<float>("position", nFloatsPerAttribute);
 
-    VertexBuffer vbo("rectangle", vertices, layout);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo.getID());
-    glBufferData(GL_ARRAY_BUFFER, vbo.getData().size() * sizeof(float), vbo.getData().data(), GL_STATIC_DRAW);
+    // VertexBuffer vbo("rectangle", vertices, layout);
 
     // Set up element buffer object
     std::vector<unsigned int> indices = {
@@ -152,10 +142,17 @@ int main()
         1, 2, 3 // second triangle
     };
 
-    unsigned int ebo_ID = 0;
-    glGenBuffers(nBuffers, &ebo_ID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_ID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    const auto [vbo_ID, ebo_ID] = buffer_manager.createModelBuffers("rectangle", vertices, layout, indices);
+
+    buffer_manager.bind(BufferType::Vertex, vbo_ID);
+    buffer_manager.bind(BufferType::Element, ebo_ID);
+
+    const VertexBuffer& vbo = buffer_manager.getVertexBuffer(vbo_ID);
+    const ElementBuffer& ebo = buffer_manager.getElementBuffer(ebo_ID);
+
+    // TODO Buffer Manager needs to pass this data to the GPU
+    glBufferData(GL_ARRAY_BUFFER, vbo.getSize() * sizeof(float), vbo.getData().data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo.getNumberOfBytes(), ebo.getElements().data(), GL_STATIC_DRAW);
 
     // Tell OpenGL how to interpret vertex data
     const auto& elements = layout.getElements();

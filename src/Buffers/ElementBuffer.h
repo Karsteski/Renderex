@@ -5,11 +5,11 @@ class ElementBuffer {
 public:
     ElementBuffer(std::string name, std::vector<unsigned int> data);
 
-    std::string getName();
-    unsigned int getID();
-    int getNumberOfBytes();
-    int getNumberOfIndices();
-    const std::vector<unsigned int>& getElements();
+    std::string getName() const;
+    unsigned int getID() const;
+    int getNumberOfBytes() const;
+    int getNumberOfIndices() const;
+    const std::vector<unsigned int>& getElements() const;
 
 private:
     std::string m_name;

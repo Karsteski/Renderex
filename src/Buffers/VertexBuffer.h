@@ -11,10 +11,11 @@ class VertexBuffer {
 public:
     VertexBuffer(std::string name, std::vector<float> data, VertexBufferLayout layout);
 
-    std::string getName();
-    unsigned int getID();
-    std::vector<float> getData(); // TODO should just return a const ref 
-    VertexBufferLayout getLayout();
+    std::string getName() const;
+    unsigned int getID() const;
+    const std::vector<float>& getData() const;
+    unsigned int getSize() const; // TODO this should be named getNvertics or similar
+    VertexBufferLayout getLayout() const;
 
 private:
     std::string m_name;

@@ -18,22 +18,27 @@ VertexBuffer::VertexBuffer(std::string name, std::vector<float> data, VertexBuff
     glGenBuffers(nBuffers, &m_vbo_ID);
 };
 
-std::string VertexBuffer::getName()
+std::string VertexBuffer::getName() const
 {
     return m_name;
 }
 
-unsigned int VertexBuffer::getID()
+unsigned int VertexBuffer::getID() const
 {
     return m_vbo_ID;
 }
 
-std::vector<float> VertexBuffer::getData()
+const std::vector<float>& VertexBuffer::getData() const
 {
     return m_data;
 }
 
-VertexBufferLayout VertexBuffer::getLayout()
+unsigned int VertexBuffer::getSize() const
+{
+    return m_data.size();
+}
+
+VertexBufferLayout VertexBuffer::getLayout() const
 {
     return m_layout;
 }
