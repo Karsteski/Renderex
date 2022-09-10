@@ -12,20 +12,51 @@ opengl_dep = dependency('opengl')
 imgui_dep = dependency('imgui', fallback : ['imgui', 'imgui_dep'])
 glm_dep = dependency('glm', fallback: ['glm', 'glm_dep'])
 
+main_file = 'src/Main.cpp'
+
 src_files = [
-    'src/Main.cpp',
+    'src/Auxiliary/Auxiliary.cpp',
     'src/Buffers/VertexBuffer.cpp',
     'src/Buffers/ElementBuffer.cpp',
-    'src/Buffers/BufferManager.cpp'
+    'src/Buffers/BufferManager.cpp',
+    'src/Model/ModelManager.cpp',
+
 ]
 
-include_dirs = [ 'vendor/stb',
+include_dirs = [ 
+    'vendor/stb',
     'src',
-    'src/Buffers'
+    'src/Buffers',
+    'src/Model',
+    'src/Auxiliary'
 ]
 
 executable('renderex',
-    sources : src_files,
-    dependencies : [glew_dep, glfw_dep, opengl_dep, imgui_dep, glm_dep],
+    sources : [main_file, src_files],
+    dependencies : [ glew_dep, glfw_dep, opengl_dep, imgui_dep, glm_dep ],
     include_directories : include_dirs
 )
+
+# Testing ---------------------------------------------------------------------------
+gtest_main_dep = dependency('gtest_main')
+gmock_dep = dependency('gmock')
+
+google_test_deps = [ gtest_main_dep, gmock_dep ]
+
+test_includes = [
+  'tests',
+]
+
+test_files = [
+    'tests/Setup.cpp',
+    'tests/Model/ModelManagerTests.cpp',
+    'tests/Buffers/VertexBufferTests.cpp',
+]
+
+test_exe = executable('tests',
+    sources : [ test_files, src_files ],
+    dependencies : [ glew_dep, glfw_dep, opengl_dep, imgui_dep, glm_dep, google_test_deps ],
+    include_directories : [ include_dirs, test_includes ]
+)
+
+test('tests', test_exe)

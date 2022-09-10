@@ -1,3 +1,4 @@
+#include "Auxiliary.h"
 #include "BufferManager.h"
 
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
@@ -6,7 +7,6 @@
 // For OpenGL functions
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <cmath>
 
 // Window and input management
 #define GLFW_INCLUDE_NONE
@@ -32,11 +32,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-// ----------------------
-// OpenGL Error Function
-// ----------------------
-void APIENTRY GLDebugPrintMessage(GLenum source, GLenum type, unsigned int id, GLenum severity, int length, const char* message, const void* data);
 
 int main()
 {
@@ -92,7 +87,7 @@ int main()
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-        glDebugMessageCallback(GLDebugPrintMessage, nullptr);
+        glDebugMessageCallback(Renderex::GLDebugPrintMessage, nullptr);
 
         std::cout << ("OpenGL Debug Mode\n");
     } else {
@@ -134,7 +129,6 @@ int main()
     const int nFloatsPerAttribute = 3;
     layout.push<float>("position", nFloatsPerAttribute);
 
-    // VertexBuffer vbo("rectangle", vertices, layout);
 
     // Set up element buffer object
     std::vector<unsigned int> indices = {
@@ -150,7 +144,8 @@ int main()
     const VertexBuffer& vbo = buffer_manager.getVertexBuffer(vbo_ID);
     const ElementBuffer& ebo = buffer_manager.getElementBuffer(ebo_ID);
 
-    // TODO Buffer Manager needs to pass this data to the GPU
+    // TODO Buffer Manager needs to pass this data to the GPU. Waiting to start using GL_DYNAMIC_DRAW
+    // This could be based on the currently bound buffers. Therefore one would only need to BufferManager::sendDataToGPU(ID)
     glBufferData(GL_ARRAY_BUFFER, vbo.getSize() * sizeof(float), vbo.getData().data(), GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo.getNumberOfBytes(), ebo.getElements().data(), GL_STATIC_DRAW);
 
