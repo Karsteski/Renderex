@@ -73,6 +73,5 @@ void Setup::setupBoilerplate(){
     }
 
     // Printing OpenGL version for convenience.
-    std::cout << "OpenGL Version + System GPU Drivers: " << glGetString(GL_VERSION) << std::endl;
-
+    // std::cout << "OpenGL Version + System GPU Drivers: " << glGetString(GL_VERSION) << std::endl;
 }

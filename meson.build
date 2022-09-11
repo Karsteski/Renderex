@@ -20,7 +20,7 @@ src_files = [
     'src/Buffers/ElementBuffer.cpp',
     'src/Buffers/BufferManager.cpp',
     'src/Model/ModelManager.cpp',
-
+    'src/Shaders/ShaderManager.cpp'
 ]
 
 include_dirs = [ 
@@ -28,7 +28,8 @@ include_dirs = [
     'src',
     'src/Buffers',
     'src/Model',
-    'src/Auxiliary'
+    'src/Auxiliary',
+    'src/Shaders'
 ]
 
 executable('renderex',
@@ -53,6 +54,7 @@ test_files = [
     'tests/Buffers/VertexBufferTests.cpp',
     'tests/Buffers/ElementBufferTests.cpp',
     'tests/Buffers/VertexBufferLayoutTests.cpp',
+    'tests/Shaders/ShaderManagerTests.cpp'
 ]
 
 test_exe = executable('tests',
