@@ -13,21 +13,21 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ElementBuffer.h"
 #include "Setup.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
+
+#include <string>
 
 using namespace ::testing;
 
-
-TEST(VertexBufferTests, VertexBufferIsGenerated)
+TEST(ElementBufferTests, ElementBufferIsGenerated)
 {
 
     Setup::setupBoilerplate();
 
-    const std::vector<float> data(0);
-    const VertexBufferLayout layout;
-    const VertexBuffer vb("test_vb", data, layout);
+    const std::vector<unsigned int> data(0);
+    const std::string name = "test_element_buffer";
+    const ElementBuffer eb(name, data);
 
-    EXPECT_THAT(vb.getID(), Eq(1));
+    EXPECT_THAT(eb.getID(), Eq(1));
 }

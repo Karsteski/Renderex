@@ -9,6 +9,7 @@
 #include <GL/gl.h>
 // clang-format on
 
+
 VertexBuffer::VertexBuffer(std::string name, std::vector<float> data, VertexBufferLayout layout)
     : m_name(name)
     , m_data(data)

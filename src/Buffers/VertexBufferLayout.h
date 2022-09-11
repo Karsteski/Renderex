@@ -2,11 +2,11 @@
 
 #include <GL/glew.h>
 
-#include <cstddef>
 #include <vector>
 #include <string>
 
-struct VertexAttribute {
+struct VertexBufferElement {
+    // TODO Add name for each elements
     std::string name;
     uint32_t type;
     uint32_t count;
@@ -48,13 +48,13 @@ public:
         return m_Stride;
     }
 
-    inline const std::vector<VertexAttribute> getElements() const
+    inline const std::vector<VertexBufferElement> getElements() const
     {
         return m_Elements;
     }
 
 private:
-    std::vector<VertexAttribute> m_Elements;
+    std::vector<VertexBufferElement> m_Elements;
 
     uint32_t m_Stride;
 };
@@ -64,19 +64,19 @@ template <>
 inline void VertexBufferLayout::push<float>(std::string name, uint32_t count)
 {
     m_Elements.push_back({ name, GL_FLOAT, count, GL_FALSE });
-    m_Stride += count * VertexAttribute::getSizeOfType(GL_FLOAT);
+    m_Stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT);
 }
 
 template <>
 inline void VertexBufferLayout::push<uint32_t>(std::string name, uint32_t count)
 {
     m_Elements.push_back({ name, GL_UNSIGNED_INT, count, GL_FALSE });
-    m_Stride += count * VertexAttribute::getSizeOfType(GL_UNSIGNED_INT);
+    m_Stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_INT);
 }
 
 template <>
 inline void VertexBufferLayout::push<unsigned char>(std::string name, uint32_t count)
 {
     m_Elements.push_back({ name, GL_UNSIGNED_BYTE, count, GL_TRUE });
-    m_Stride += count * VertexAttribute::getSizeOfType(GL_UNSIGNED_BYTE);
+    m_Stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_BYTE);
 }

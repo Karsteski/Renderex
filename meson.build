@@ -51,6 +51,8 @@ test_files = [
     'tests/Setup.cpp',
     'tests/Model/ModelManagerTests.cpp',
     'tests/Buffers/VertexBufferTests.cpp',
+    'tests/Buffers/ElementBufferTests.cpp',
+    'tests/Buffers/VertexBufferLayoutTests.cpp',
 ]
 
 test_exe = executable('tests',

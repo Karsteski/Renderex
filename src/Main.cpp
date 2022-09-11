@@ -117,7 +117,7 @@ int main()
     // ----------------------
 
     BufferManager buffer_manager;
-    int nBuffers = 1;
+    const int nBuffers = 1;
     std::vector<float> vertices = {
         0.5f, 0.5f, 0.0f, // top right
         0.5f, -0.5f, 0.0f, // bottom right
