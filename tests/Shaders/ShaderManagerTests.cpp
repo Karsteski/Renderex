@@ -26,6 +26,7 @@ TEST(ShaderManagerFreeFunctions, LoadShaderReadsFileCorrectly)
 
     // Read that same test_file
     const std::string file = Renderex::loadShader(filepath);
+
     std::istringstream file_ss(file);
 
     // Ensure that the first two lines read match the two lines written

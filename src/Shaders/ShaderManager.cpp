@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 
-std::string Renderex::loadShader(std::string path){
-    std::ifstream stream(path);
+std::string Renderex::loadShader(std::string_view path){
+    std::ifstream stream(path.data());
     std::string line = "";
 
     std::stringstream string_stream;
