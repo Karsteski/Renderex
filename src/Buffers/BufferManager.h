@@ -17,6 +17,16 @@ enum class BufferType : int {
 // TODO Should I find a way to only have one of these?
 class BufferManager {
 public:
+    /* 
+     * TODO
+     * Needs a bit of an API cleanup
+     * createModelBuffers should instead return BufferManager's own id for each set of buffers
+     * Calling bind on this id will set up the vertexAttribPointer as well as bind the corresponding vbo + ebo
+     * Should be able to call a getBufferIDs() which returns a struct of vbo + ebo
+     * Basically, the BufferManager public functions should work off its own model_id, and we just obtain the BufferIDs for drawing
+     * */
+
+
     BufferManager();
 
     // Creates the VertexBuffer and its corresponding ElementBuffer from the data provided.

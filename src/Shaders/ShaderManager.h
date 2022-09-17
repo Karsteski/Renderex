@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ struct Shader {
 
 enum class ShaderType : unsigned int;
 
-std::string loadShader(std::string_view path);
+std::optional<std::string> loadShader(std::filesystem::path path);
 
 class ShaderManager {
 public:
@@ -35,7 +36,7 @@ public:
     void unbind();
 
     bool shadersAvailable() const;
-    
+
     unsigned int getID() const;
 
 private:

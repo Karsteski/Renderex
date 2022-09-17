@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <optional>
@@ -10,18 +11,24 @@
 
 namespace Renderex {
 
-std::string loadShader(std::string_view path)
+std::optional<std::string> loadShader(std::filesystem::path path)
 {
-    std::ifstream stream(path.data());
-    std::string line = "";
+    if (std::filesystem::exists(path)) {
 
-    std::stringstream string_stream;
+        std::ifstream stream(path);
+        std::string line = "";
 
-    while (std::getline(stream, line)) {
-        string_stream << line << std::endl;
+        std::stringstream string_stream;
+
+        while (std::getline(stream, line)) {
+            string_stream << line << std::endl;
+        }
+
+        return string_stream.str();
+    } else {
+
+        return std::nullopt;
     }
-
-    return string_stream.str();
 }
 
 enum class ShaderType : unsigned int {
