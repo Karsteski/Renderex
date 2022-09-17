@@ -186,7 +186,7 @@ int main()
 
     Renderex::ShaderManager shader_manager(vertexShaderSource, fragmentShaderSource);
 
-    const unsigned int shader_program_id = shader_manager.getID();
+    const unsigned int shader_program_id = shader_manager.getProgramID();
 
     // Check if this is -1, then it failed to get the uniform location
     const int rectangle_colour_location_ID = glGetUniformLocation(shader_program_id, "rectangle_colour");

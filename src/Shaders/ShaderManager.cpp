@@ -31,10 +31,7 @@ std::optional<std::string> loadShader(std::filesystem::path path)
     }
 }
 
-enum class ShaderType : unsigned int {
-    vertexShader = GL_VERTEX_SHADER,
-    fragmentShader = GL_FRAGMENT_SHADER
-};
+ShaderManager::ShaderManager() { }
 
 ShaderManager::ShaderManager(std::string_view vertex_shader_path, std::string_view fragment_shader_path)
     : m_shaders_available(false)
@@ -43,11 +40,15 @@ ShaderManager::ShaderManager(std::string_view vertex_shader_path, std::string_vi
     const std::optional<unsigned int> fragment_shader = createShader(ShaderType::fragmentShader, fragment_shader_path.data());
 
     if (vertex_shader.has_value() and fragment_shader.has_value()) {
-        m_shader_program_id = compileShaderProgram(vertex_shader.value(), fragment_shader.value());
+        const auto shader_program = compileShaderProgram(vertex_shader.value(), fragment_shader.value());
 
-        bind(m_shader_program_id);
+        if (shader_program.has_value()) {
+            m_shader_program_id = shader_program.value();
+            bind(m_shader_program_id);
 
-        m_shaders_available = true;
+            m_shaders_available = true;
+        }
+
     } else {
         m_shaders_available = false;
     }
@@ -61,7 +62,7 @@ std::optional<unsigned int> ShaderManager::createShader(ShaderType shader_type, 
     return compiled_shader_id;
 }
 
-unsigned int ShaderManager::compileShaderProgram(unsigned int vertex_shader_id, unsigned int fragment_shader_id)
+std::optional<unsigned int> ShaderManager::compileShaderProgram(unsigned int vertex_shader_id, unsigned int fragment_shader_id)
 {
     const unsigned int program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
@@ -69,11 +70,17 @@ unsigned int ShaderManager::compileShaderProgram(unsigned int vertex_shader_id, 
     glLinkProgram(program_id);
     glValidateProgram(program_id);
 
-    // Delete to shaders once they have been linked and compiled.
-    glDeleteShader(vertex_shader_id);
-    glDeleteShader(fragment_shader_id);
+    int status = 0;
+    glGetProgramiv(program_id, GL_VALIDATE_STATUS, &status);
+    if (status == GL_TRUE) {
+        // Delete to shaders once they have been linked and compiled.
+        glDeleteShader(vertex_shader_id);
+        glDeleteShader(fragment_shader_id);
 
-    return program_id;
+        return program_id;
+    } else {
+        return std::nullopt;
+    }
 }
 
 void ShaderManager::bind(unsigned int shader_program_id)
@@ -91,7 +98,7 @@ bool ShaderManager::shadersAvailable() const
     return m_shaders_available;
 }
 
-unsigned int ShaderManager::getID() const
+unsigned int ShaderManager::getProgramID() const
 {
     return m_shader_program_id;
 }
