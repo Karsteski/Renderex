@@ -9,6 +9,8 @@
 
 using namespace ::testing;
 
+// Renderex::loadShader should check if the path is even valid in the first place. Or perhaps a separate function for that
+// Either way, invalid path should be handled.
 TEST(ShaderManagerFreeFunctions, LoadShaderReadsFileCorrectly)
 {   
     // Write a test_file

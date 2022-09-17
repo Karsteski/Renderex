@@ -36,9 +36,9 @@ ShaderManager::ShaderManager(std::string_view vertex_shader_path, std::string_vi
     const std::optional<unsigned int> fragment_shader = createShader(ShaderType::fragmentShader, fragment_shader_path.data());
 
     if (vertex_shader.has_value() and fragment_shader.has_value()) {
-        const unsigned int program_id = compileShaderProgram(vertex_shader.value(), fragment_shader.value());
+        m_shader_program_id = compileShaderProgram(vertex_shader.value(), fragment_shader.value());
 
-        bind(program_id);
+        bind(m_shader_program_id);
 
         m_shaders_available = true;
     } else {
@@ -51,16 +51,12 @@ std::optional<unsigned int> ShaderManager::createShader(ShaderType shader_type, 
 
     std::optional<unsigned int> compiled_shader_id = compileShader(shader_type, shader);
 
-    if (compiled_shader_id == std::nullopt) {
-        return false;
-    }
-
-    return true;
+    return compiled_shader_id;
 }
 
 unsigned int ShaderManager::compileShaderProgram(unsigned int vertex_shader_id, unsigned int fragment_shader_id)
 {
-    unsigned int program_id = glCreateProgram();
+    const unsigned int program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
     glLinkProgram(program_id);
@@ -83,9 +79,14 @@ void ShaderManager::unbind()
     glUseProgram(0);
 }
 
-bool ShaderManager::shadersAvailable()
+bool ShaderManager::shadersAvailable() const
 {
     return m_shaders_available;
+}
+
+unsigned int ShaderManager::getID() const
+{
+    return m_shader_program_id;
 }
 
 std::optional<unsigned int> ShaderManager::compileShader(ShaderType shader_type, const std::string& source)
@@ -119,13 +120,4 @@ std::optional<unsigned int> ShaderManager::compileShader(ShaderType shader_type,
     return id;
 }
 
-bool ShaderManager::attachShader(unsigned int shader_id, unsigned int shader_program_id)
-{
-    if (shader_program_id != 0) {
-        glAttachShader(shader_program_id, shader_id);
-        return true;
-    }
-
-    return false;
-}
 }

@@ -1,5 +1,6 @@
 #include "Auxiliary.h"
 #include "BufferManager.h"
+#include "ShaderManager.h"
 
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
 // glew.h MUST be included before gl.h
@@ -129,7 +130,6 @@ int main()
     const int nFloatsPerAttribute = 3;
     layout.push<float>("position", nFloatsPerAttribute);
 
-
     // Set up element buffer object
     std::vector<unsigned int> indices = {
         0, 1, 3, // first triangle
@@ -171,26 +171,7 @@ int main()
         }
     )";
 
-    const unsigned int vs_ID = glCreateShader(GL_VERTEX_SHADER);
-    const int nStrings = 1;
-    const char* vs_source = vertexShaderSource.c_str();
-    glShaderSource(vs_ID, nStrings, &vs_source, nullptr);
-    glCompileShader(vs_ID);
-
-    // Vertex shader error checking
-    int vs_result = 0;
-    glGetShaderiv(vs_ID, GL_COMPILE_STATUS, &vs_result);
-
-    if (vs_result == GL_FALSE) {
-        int errorMessageLength = 0;
-        glGetShaderiv(vs_ID, GL_INFO_LOG_LENGTH, &errorMessageLength);
-        std::string message = "";
-        glGetShaderInfoLog(vs_ID, errorMessageLength, &errorMessageLength, message.data());
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << std::endl;
-        std::cout << message << std::endl;
-    }
-
-    // Set up fragment shader
+    // // Set up fragment shader
     const std::string fragmentShaderSource = R"(
         #version 330 core
         out vec4 FragColor;
@@ -203,53 +184,12 @@ int main()
         }
     )";
 
-    const unsigned int fs_ID = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* fs_source = fragmentShaderSource.c_str();
-    glShaderSource(fs_ID, nStrings, &fs_source, nullptr);
-    glCompileShader(fs_ID);
+    Renderex::ShaderManager shader_manager(vertexShaderSource, fragmentShaderSource);
 
-    // Fragment shader error checking
-    int fs_result = 0;
-    glGetShaderiv(fs_ID, GL_COMPILE_STATUS, &fs_result);
-
-    if (fs_result == GL_FALSE) {
-        int errorMessageLength = 0;
-        glGetShaderiv(fs_ID, GL_INFO_LOG_LENGTH, &errorMessageLength);
-        std::string message = "";
-        glGetShaderInfoLog(fs_ID, errorMessageLength, &errorMessageLength, message.data());
-
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED" << std::endl;
-        std::cout << message << std::endl;
-    }
-
-    // Create and link shader program
-    const unsigned int shaderProgram_ID = glCreateProgram();
-    glAttachShader(shaderProgram_ID, vs_ID);
-    glAttachShader(shaderProgram_ID, fs_ID);
-    glLinkProgram(shaderProgram_ID);
-    glUseProgram(shaderProgram_ID);
-
-    // Shader program error checking
-    int sp_result = 0;
-    glGetProgramiv(shaderProgram_ID, GL_LINK_STATUS, &sp_result);
-
-    if (sp_result == GL_FALSE) {
-        int errorMessageLength = 512;
-        std::string message = "";
-        glGetProgramInfoLog(shaderProgram_ID, errorMessageLength, nullptr, message.data());
-
-        std::cout << "ERROR::SHADER::PROGRAM::LINKAGE_FAILED" << std::endl;
-        std::cout << message << std::endl;
-    }
-
-    // Delete shaders once they've been linked into the program object
-    glDeleteShader(vs_ID);
-    glDeleteShader(fs_ID);
-
-    // Set up first uniform
+    const unsigned int shader_program_id = shader_manager.getID();
 
     // Check if this is -1, then it failed to get the uniform location
-    int rectangle_colour_location_ID = glGetUniformLocation(shaderProgram_ID, "rectangle_colour");
+    const int rectangle_colour_location_ID = glGetUniformLocation(shader_program_id, "rectangle_colour");
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);

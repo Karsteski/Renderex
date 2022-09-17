@@ -20,6 +20,8 @@ class ShaderManager {
 public:
     ShaderManager(std::string_view vertex_shader_path, std::string_view fragment_shader_path);
 
+    ShaderManager() = delete;
+
     // For simplicity, ShaderManager curently only deals with a single vertex and fragment shader
     std::optional<unsigned int> createShader(ShaderType shader_type, const std::string& shader);
 
@@ -32,7 +34,9 @@ public:
     // Quit using the currently bound shader program
     void unbind();
 
-    bool shadersAvailable();
+    bool shadersAvailable() const;
+    
+    unsigned int getID() const;
 
 private:
     std::vector<Shader> m_shaders;
@@ -40,6 +44,5 @@ private:
     bool m_shaders_available;
 
     std::optional<unsigned int> compileShader(ShaderType shader_type, const std::string& source);
-    bool attachShader(unsigned int shader_id, unsigned int shader_program_id);
 };
 }
