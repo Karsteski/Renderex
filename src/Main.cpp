@@ -1,5 +1,5 @@
 #include "Auxiliary.h"
-#include "BufferManager.h"
+#include "ModelManager.h"
 #include "ShaderManager.h"
 
 // GLEW loads OpenGL function pointers from the system's graphics drivers.
@@ -117,7 +117,7 @@ int main()
     // Relevant OpenGL Code
     // ----------------------
 
-    BufferManager buffer_manager;
+    Renderex::ModelManager model_manager;
     const int nBuffers = 1;
     std::vector<float> vertices = {
         0.5f, 0.5f, 0.0f, // top right
@@ -136,13 +136,11 @@ int main()
         1, 2, 3 // second triangle
     };
 
-    const auto [vbo_ID, ebo_ID] = buffer_manager.createModelBuffers("rectangle", vertices, layout, indices);
+    const unsigned int model_id = model_manager.createModel("rectangle", vertices, layout, indices);
+    model_manager.bind(model_id);
 
-    buffer_manager.bind(BufferType::Vertex, vbo_ID);
-    buffer_manager.bind(BufferType::Element, ebo_ID);
-
-    const VertexBuffer& vbo = buffer_manager.getVertexBuffer(vbo_ID);
-    const ElementBuffer& ebo = buffer_manager.getElementBuffer(ebo_ID);
+    const VertexBuffer& vbo = model_manager.getModel(model_id).getVertexBuffer();
+    const ElementBuffer& ebo = model_manager.getModel(model_id).getElementBuffer();
 
     // TODO Buffer Manager needs to pass this data to the GPU. Waiting to start using GL_DYNAMIC_DRAW
     // This could be based on the currently bound buffers. Therefore one would only need to BufferManager::sendDataToGPU(ID)

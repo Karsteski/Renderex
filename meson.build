@@ -18,8 +18,8 @@ src_files = [
     'src/Auxiliary/Auxiliary.cpp',
     'src/Buffers/VertexBuffer.cpp',
     'src/Buffers/ElementBuffer.cpp',
-    'src/Buffers/BufferManager.cpp',
     'src/Model/ModelManager.cpp',
+    'src/Model/Model.cpp',
     'src/Shaders/ShaderManager.cpp'
 ]
 
