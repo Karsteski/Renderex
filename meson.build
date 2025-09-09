@@ -59,7 +59,8 @@ test_files = [
 test_exe = executable('tests',
     sources : [ test_files, src_files ],
     dependencies : [ glew_dep, glfw_dep, opengl_dep, imgui_dep, glm_dep, google_test_deps ],
-    include_directories : [ include_dirs, test_includes ]
+    include_directories : [ include_dirs, test_includes ],
+    build_by_default : false,
 )
 
 test('tests', test_exe)
