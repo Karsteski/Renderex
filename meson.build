@@ -24,7 +24,6 @@ src_files = [
 ]
 
 include_dirs = [ 
-    'vendor/stb',
     'src',
     'src/Buffers',
     'src/Model',

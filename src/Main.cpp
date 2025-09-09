@@ -26,9 +26,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-// For model and image loading
-#include <stb_image.h>
-
 #include <iostream>
 #include <memory>
 #include <string>
