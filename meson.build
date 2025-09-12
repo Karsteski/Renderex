@@ -15,20 +15,22 @@ glm_dep = dependency('glm', fallback: ['glm', 'glm_dep'])
 main_file = 'src/Main.cpp'
 
 src_files = [
+    'src/Application/Application.cpp',
     'src/Auxiliary/Auxiliary.cpp',
     'src/Buffers/VertexBuffer.cpp',
     'src/Buffers/ElementBuffer.cpp',
     'src/Model/ModelManager.cpp',
     'src/Model/Model.cpp',
-    'src/Shaders/ShaderManager.cpp'
+    'src/Shaders/ShaderManager.cpp',
 ]
 
 include_dirs = [ 
     'src',
+    'src/Application',
+    'src/Auxiliary',
     'src/Buffers',
     'src/Model',
-    'src/Auxiliary',
-    'src/Shaders'
+    'src/Shaders',
 ]
 
 executable('renderex',

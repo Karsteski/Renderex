@@ -1,9 +1,16 @@
 #include "Auxiliary.h"
 
+// GLEW loads OpenGL function pointers from the system's graphics drivers.
+// glew.h MUST be included before gl.h
+// clang-format off
+// For OpenGL functions
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 #include <iostream>
 #include <string>
 
-void APIENTRY Renderex::GLDebugPrintMessage(GLenum source, GLenum type, unsigned int id, GLenum severity, int length, const char* message, const void* data)
+void Renderex::GLDebugPrintMessage(GLenum source, GLenum type, unsigned int id, GLenum severity, int length, const char* message, const void* data)
 {
     /*
 
